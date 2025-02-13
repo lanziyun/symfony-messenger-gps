@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+    php-fpm:
+        build:
+            context: .
+            dockerfile: docker/php/development/Dockerfile
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - dev
+        user: '${UID:-1000}:${GID:-1000}'
+
+    nginx:
+        build:
+            context: .
+            dockerfile: docker/nginx/Dockerfile
+        ports:
+            - '${APP_PORT:-85}:8080'
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - dev
+        depends_on:
+            - php-fpm
+
+    # redis:
+    #     image: 'redis:alpine'
+    #     ports:
+    #         - '${FORWARD_REDIS_PORT:-6380}:6379'
+    #     volumes:
+    #         - 'devredis:/data'
+    #     networks:
+    #         - dev
+    #     healthcheck:
+    #         test: [ "CMD", "redis-cli", "ping" ]
+    #         retries: 3
+    #         timeout: 5s
+
+networks:
+    dev:
+        driver: bridge
+        ipam:
+            config:
+                -   subnet: 192.168.105.0/24
+                    gateway: 192.168.105.1
+
+volumes:
+    devmysql:
+        driver: local
+    devredis:
+        driver: local
+    dev-mysql-replica1:
+        driver: local
+    dev-mysql-primary-log:
+        driver: local
+    dev-mysql-replica1-log:
+        driver: local

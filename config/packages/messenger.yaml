@@ -1,0 +1,41 @@
+framework:
+    messenger:
+        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
+        # failure_transport: failed
+
+        transports:
+            # https://symfony.com/doc/current/messenger.html#transport-configuration
+            # async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            # failed: 'doctrine://default?queue_name=failed'
+            # sync: 'sync://'
+            gps_transport:
+                dsn: 'gps://default'
+                options:
+                    client_config: # optional (default: [])
+                        apiEndpoint: []
+                        credentialsConfig: []
+                    topic: # optional (default name: messages)
+                        name: 'tiffany-test'
+                        options: # optional create options if not exists (default: []), for all options take at look at https://googleapis.github.io/google-cloud-php/#/docs/google-cloud/v0.188.0/pubsub/topic?method=create
+                            labels:
+                                - label1
+                                - label2
+                    subscription: # optional (default the same as topic.name)
+                        name: 'tiffany-test-sub'
+                        options: # optional create options if not exists (default: []), fol all options take a look at https://googleapis.github.io/google-cloud-php/#/docs/google-cloud/v0.188.0/pubsub/subscription?method=create
+                            enableExactlyOnceDelivery: true
+                        pull:
+                            maxMessages: 10 # optional (default: 10)
+
+        routing:
+            # Route your messages to the transports
+            # 'App\Message\YourMessage': async
+
+# when@test:
+#    framework:
+#        messenger:
+#            transports:
+#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
+#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+#                async: 'in-memory://'
+
